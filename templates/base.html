@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{% block title %}Student Result Alert System{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+</head>
+
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand" href="{{ url_for('home') }}">Result Alert</a>
+      <nav class="main-nav">
+        {% block nav %}{% endblock %}
+      </nav>
+    </div>
+  </header>
+
+  <main class="main-content">
+    <div class="page-container">
+      {% block content %}{% endblock %}
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <p>© 2026 Student Result Alert System</p>
+  </footer>
+</body>
+</html>

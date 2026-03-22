@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %}Your Results{% endblock %}
+
+{% block nav %}
+  <a class="btn btn--secondary" href="{{ url_for('home') }}">Back</a>
+{% endblock %}
+
+{% block content %}
+<div class="card">
+  <h2>Your Results</h2>
+
+  {% if results %}
+  <div class="table-responsive">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Subject</th>
+          <th>Marks</th>
+          <th>Grade</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for r in results %}
+        <tr>
+          <td>{{ r[0] }}</td>
+          <td>{{ r[1] }}</td>
+          <td>{{ r[2] }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <p class="page-alert">No results available for the provided Student ID.</p>
+  {% endif %}
+</div>
+{% endblock %}

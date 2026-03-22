@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block title %}Student Dashboard{% endblock %}
+
+{% block nav %}
+  <a class="btn btn--secondary" href="{{ url_for('home') }}">Logout</a>
+{% endblock %}
+
+{% block content %}
+<div class="card">
+  <h2>Welcome, {{ name }}</h2>
+  <p class="page-alert">Your Student ID: <strong>{{ student_id }}</strong></p>
+
+  {% if results %}
+  <div class="table-responsive">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Subject</th>
+          <th>Marks</th>
+          <th>Grade</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for r in results %}
+        <tr>
+          <td>{{ r[0] }}</td>
+          <td>{{ r[1] }}</td>
+          <td>{{ r[2] }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <p class="page-alert">No results found yet. Please check back later.</p>
+  {% endif %}
+</div>
+{% endblock %}

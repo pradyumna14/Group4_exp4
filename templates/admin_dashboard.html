@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block nav %}
+  <a class="btn btn--secondary" href="{{ url_for('home') }}">Logout</a>
+{% endblock %}
+
+{% block content %}
+<div class="card">
+  <h2>Admin Dashboard</h2>
+
+  <p class="page-alert">Use the shortcuts below to manage students and upload results.</p>
+
+  <div class="action-grid">
+    <a class="btn" href="{{ url_for('add_student_page') }}">Add Student</a>
+    <a class="btn" href="{{ url_for('upload_result_page') }}">Upload Result</a>
+    <a class="btn" href="{{ url_for('view_result_page') }}">View Result</a>
+  </div>
+</div>
+{% endblock %}
