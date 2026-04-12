@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Subjects{% endblock %}
+
+{% block nav %}
+  <a class="btn btn--secondary" href="{{ url_for('admin_dashboard') }}">Back</a>
+{% endblock %}
+
+{% block content %}
+<div class="card">
+  <h2>Manage Subjects</h2>
+
+  <h3>Add New Subject</h3>
+  <form action="/add_subject" method="POST" class="form">
+    <div class="form-group">
+      <label for="subject_name">Subject Name</label>
+      <input id="subject_name" class="form-control" type="text" name="subject_name" placeholder="e.g., Database Management Systems" required />
+    </div>
+
+    <div class="form-group">
+      <label for="course_id">Course</label>
+      {% if courses %}
+      <select id="course_id" class="form-control" name="course_id" required>
+        <option value="">-- Select Course --</option>
+        {% for course in courses %}
+        <option value="{{ course[0] }}">{{ course[1] }}</option>
+        {% endfor %}
+      </select>
+      {% else %}
+      <p class="page-alert"><strong>No courses available.</strong> Please add courses first before adding subjects.</p>
+      {% endif %}
+    </div>
+
+    {% if courses %}
+    <button class="btn" type="submit">Add Subject</button>
+    {% endif %}
+  </form>
+
+  <hr style="margin: 30px 0; border: 1px solid #ddd;">
+
+  <h3>Existing Subjects</h3>
+  {% if subjects %}
+  <div class="table-responsive">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Subject ID</th>
+          <th>Subject Name</th>
+          <th>Course</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for subject in subjects %}
+        <tr>
+          <td>{{ subject[0] }}</td>
+          <td>{{ subject[1] }}</td>
+          <td>{{ subject[2] }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <p class="page-alert">No subjects available. Add a subject to get started.</p>
+  {% endif %}
+</div>
+{% endblock %}

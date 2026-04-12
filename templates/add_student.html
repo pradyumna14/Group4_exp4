@@ -10,6 +10,7 @@
 <div class="card">
   <h2>Add Student</h2>
 
+  {% if courses %}
   <form action="/add_student" method="POST" class="form">
     <div class="form-group">
       <label for="name">Name</label>
@@ -27,16 +28,26 @@
     </div>
 
     <div class="form-group">
-      <label for="course">Course</label>
-      <input id="course" class="form-control" type="text" name="course" placeholder="Course name" required />
+      <label for="course_id">Course</label>
+      <select id="course_id" class="form-control" name="course_id" required>
+        <option value="">-- Select Course --</option>
+        {% for course in courses %}
+        <option value="{{ course[0] }}">{{ course[1] }}</option>
+        {% endfor %}
+      </select>
     </div>
 
     <div class="form-group">
       <label for="password">Password</label>
-      <input id="password" class="form-control" type="password" name="password" placeholder="Set a password" required />
+      <input id="password" class="form-control" type="password" name="password" placeholder="Set a strong password" minlength="8" pattern="(?=.*\d)(?=.*[A-Za-z]).{8,}" title="At least 8 characters, including letters and numbers" required />
+      <p style="margin:0.5rem 0 0;font-size:0.9rem;color:#4a5568;">Password must be at least 8 characters long and include letters and numbers.</p>
     </div>
 
     <button class="btn" type="submit">Add Student</button>
   </form>
+  {% else %}
+  <p class="page-alert"><strong>No courses available.</strong> Please add courses first before adding students.</p>
+  <a class="btn" href="{{ url_for('manage_courses') }}">Add Courses</a>
+  {% endif %}
 </div>
 {% endblock %}

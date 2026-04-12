@@ -3,17 +3,17 @@
 {% block title %}View Result{% endblock %}
 
 {% block nav %}
-  <a class="btn btn--secondary" href="{{ url_for('home') }}">Back</a>
+  <a class="btn btn--secondary" href="{{ url_for('admin_dashboard') }}">Back</a>
 {% endblock %}
 
 {% block content %}
 <div class="card">
-  <h2>View Your Result</h2>
+  <h2>View Student Result</h2>
 
   <form action="/view_result" method="POST" class="form">
     <div class="form-group">
       <label for="student_id">Student ID</label>
-      <input id="student_id" class="form-control" type="text" name="student_id" placeholder="Enter your student ID" required />
+      <input id="student_id" class="form-control" type="number" name="student_id" placeholder="Enter student ID" required />
     </div>
 
     <button class="btn" type="submit">View Result</button>

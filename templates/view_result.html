@@ -3,12 +3,12 @@
 {% block title %}Your Results{% endblock %}
 
 {% block nav %}
-  <a class="btn btn--secondary" href="{{ url_for('home') }}">Back</a>
+  <a class="btn btn--secondary" href="{{ url_for('view_result_page') }}">Back</a>
 {% endblock %}
 
 {% block content %}
 <div class="card">
-  <h2>Your Results</h2>
+  <h2>Student Results</h2>
 
   {% if results %}
   <div class="table-responsive">

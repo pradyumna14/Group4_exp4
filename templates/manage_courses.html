@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Courses{% endblock %}
+
+{% block nav %}
+  <a class="btn btn--secondary" href="{{ url_for('admin_dashboard') }}">Back</a>
+{% endblock %}
+
+{% block content %}
+<div class="card">
+  <h2>Manage Courses</h2>
+
+  <h3>Add New Course</h3>
+  <form action="/add_course" method="POST" class="form">
+    <div class="form-group">
+      <label for="course_name">Course Name</label>
+      <input id="course_name" class="form-control" type="text" name="course_name" placeholder="e.g., B.Tech CSE" required />
+    </div>
+
+    <div class="form-group">
+      <label for="description">Description</label>
+      <textarea id="description" class="form-control" name="description" placeholder="Course description" rows="3" required></textarea>
+    </div>
+
+    <button class="btn" type="submit">Add Course</button>
+  </form>
+
+  <hr style="margin: 30px 0; border: 1px solid #ddd;">
+
+  <h3>Existing Courses</h3>
+  {% if courses %}
+  <div class="table-responsive">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Course ID</th>
+          <th>Course Name</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for course in courses %}
+        <tr>
+          <td>{{ course[0] }}</td>
+          <td>{{ course[1] }}</td>
+          <td>{{ course[2] }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <p class="page-alert">No courses available. Add a course to get started.</p>
+  {% endif %}
+</div>
+{% endblock %}

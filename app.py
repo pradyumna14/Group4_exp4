@@ -54,8 +54,10 @@ def student_dashboard(student_id):
 
     name = student[0]
 
-    # Load results
-    cursor.execute("SELECT subject, marks, grade FROM results WHERE student_id=%s", (student_id,))
+    # Load results with subject names
+    cursor.execute("""SELECT s.subject_name, r.marks, r.grade FROM results r 
+                      JOIN subjects s ON r.subject_id = s.subject_id 
+                      WHERE r.student_id=%s""", (student_id,))
     results = cursor.fetchall()
 
     return render_template("student_dashboard.html", name=name, results=results, student_id=student_id)
@@ -73,6 +75,67 @@ def admin():
 @app.route('/admin_dashboard')
 def admin_dashboard():
     return render_template("admin_dashboard.html")
+
+
+# ---------------- MANAGE COURSES PAGE ----------------
+
+@app.route('/manage_courses')
+def manage_courses():
+    cursor.execute("SELECT course_id, course_name, description FROM courses ORDER BY course_id DESC")
+    courses = cursor.fetchall()
+    return render_template("manage_courses.html", courses=courses)
+
+
+# ---------------- ADD COURSE ----------------
+
+@app.route('/add_course', methods=['POST'])
+def add_course():
+    course_name = request.form['course_name']
+    description = request.form['description']
+
+    sql = "INSERT INTO courses(course_name, description) VALUES(%s, %s)"
+    values = (course_name, description)
+
+    try:
+        cursor.execute(sql, values)
+        db.commit()
+        return redirect(url_for('manage_courses'))
+    except Exception as e:
+        db.rollback()
+        return f"Error adding course: {str(e)}"
+
+
+# ---------------- MANAGE SUBJECTS PAGE ----------------
+
+@app.route('/manage_subjects')
+def manage_subjects():
+    cursor.execute("""SELECT s.subject_id, s.subject_name, c.course_name, s.course_id 
+                      FROM subjects s 
+                      JOIN courses c ON s.course_id = c.course_id 
+                      ORDER BY s.subject_id DESC""")
+    subjects = cursor.fetchall()
+    cursor.execute("SELECT course_id, course_name FROM courses")
+    courses = cursor.fetchall()
+    return render_template("manage_subjects.html", subjects=subjects, courses=courses)
+
+
+# ---------------- ADD SUBJECT ----------------
+
+@app.route('/add_subject', methods=['POST'])
+def add_subject():
+    subject_name = request.form['subject_name']
+    course_id = request.form['course_id']
+
+    sql = "INSERT INTO subjects(subject_name, course_id) VALUES(%s, %s)"
+    values = (subject_name, course_id)
+
+    try:
+        cursor.execute(sql, values)
+        db.commit()
+        return redirect(url_for('manage_subjects'))
+    except Exception as e:
+        db.rollback()
+        return f"Error adding subject: {str(e)}"
 
 
 # ---------------- ADMIN LOGIN ----------------
@@ -99,7 +162,9 @@ def admin_login():
 
 @app.route('/add_student_page')
 def add_student_page():
-    return render_template("add_student.html")
+    cursor.execute("SELECT course_id, course_name FROM courses")
+    courses = cursor.fetchall()
+    return render_template("add_student.html", courses=courses)
 
 
 # ---------------- ADD STUDENT ----------------
@@ -110,12 +175,19 @@ def add_student():
     name = request.form['name']
     email = request.form['email']
     mobile = request.form['mobile']
-    course = request.form['course']
+    course_id = request.form['course_id']
     password = request.form['password']
+
+    if len(password) < 8:
+        return "Password must be at least 8 characters long."
+    if not any(char.isdigit() for char in password):
+        return "Password must include at least one number."
+    if not any(char.isalpha() for char in password):
+        return "Password must include at least one letter."
 
     sql = "INSERT INTO students(name,email,mobile,course,password) VALUES(%s,%s,%s,%s,%s)"
 
-    values = (name,email,mobile,course,password)
+    values = (name,email,mobile,course_id,password)
 
     cursor.execute(sql,values)
 
@@ -124,11 +196,11 @@ def add_student():
     return redirect(url_for('admin_dashboard'))
 
 
-# ---------------- UPLOAD RESULT PAGE ----------------
-
 @app.route('/upload_result_page')
 def upload_result_page():
-    return render_template("upload_result.html")
+    cursor.execute("SELECT subject_id, subject_name FROM subjects ORDER BY subject_id")
+    subjects = cursor.fetchall()
+    return render_template("upload_result.html", subjects=subjects)
 
 
 # ---------------- EMAIL FUNCTION ----------------
@@ -163,16 +235,22 @@ Login to check your marks.
 def upload_result():
 
     student_id = request.form['student_id']
-    subject = request.form['subject']
+    subject_id = request.form['subject_id']
     marks = request.form['marks']
     grade = request.form['grade']
 
-    sql = "INSERT INTO results(student_id,subject,marks,grade) VALUES(%s,%s,%s,%s)"
+    sql = "INSERT INTO results(student_id,subject_id,marks,grade) VALUES(%s,%s,%s,%s)"
 
-    values = (student_id,subject,marks,grade)
+    values = (student_id,subject_id,marks,grade)
 
     cursor.execute(sql,values)
 
+    db.commit()
+
+    # Log notification
+    notification_msg = f"Result uploaded for Subject ID {subject_id} - Marks: {marks}, Grade: {grade}"
+    cursor.execute("INSERT INTO notifications(student_id, message) VALUES(%s, %s)", 
+                   (student_id, notification_msg))
     db.commit()
 
     # get student email
@@ -201,7 +279,9 @@ def view_result():
 
     student_id = request.form['student_id']
 
-    query = "SELECT subject,marks,grade FROM results WHERE student_id=%s"
+    query = """SELECT s.subject_name, r.marks, r.grade FROM results r 
+               JOIN subjects s ON r.subject_id = s.subject_id 
+               WHERE r.student_id=%s"""
 
     cursor.execute(query,(student_id,))
 

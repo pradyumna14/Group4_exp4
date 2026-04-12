@@ -10,9 +10,12 @@
 <div class="card">
   <h2>Admin Dashboard</h2>
 
-  <p class="page-alert">Use the shortcuts below to manage students and upload results.</p>
+  <p class="page-alert">Manage courses, subjects, students, and results using the options below.</p>
 
   <div class="action-grid">
+    <h3>Manage Data</h3>
+    <a class="btn" href="{{ url_for('manage_courses') }}">Manage Courses</a>
+    <a class="btn" href="{{ url_for('manage_subjects') }}">Manage Subjects</a>
     <a class="btn" href="{{ url_for('add_student_page') }}">Add Student</a>
     <a class="btn" href="{{ url_for('upload_result_page') }}">Upload Result</a>
     <a class="btn" href="{{ url_for('view_result_page') }}">View Result</a>
